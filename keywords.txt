@@ -1,0 +1,13 @@
+MovesPwm                KEYWORD1
+Moves   				KEYWORD1
+GoForward   			KEYWORD2
+GoBack  		        KEYWORD2
+TurnRightIndependent    KEYWORD2
+TurnRightSteering   	KEYWORD2
+TurnLeftIndependent 	KEYWORD2
+TurnLeftSteering    	KEYWORD2
+Stop    		        KEYWORD2
+LeftForvardPin      	LITERAL1
+LeftBackPin 		    LITERAL1
+RightForwardPin 	    LITERAL1
+RightBackPin    	    LITERAL1
