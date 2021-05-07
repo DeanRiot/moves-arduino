@@ -3,7 +3,7 @@
 
 class MovesPWM {
     public:
-        MovesPWM(int LeftForwardPin,int LeftBackPin, int RightForwardPin, int RightBackPin, int freq=250);
+        MovesPWM(int LeftForwardPin,int LeftBackPin, int RightForwardPin, int RightBackPin, int freq = 100);
         void GoForward();
         void GoBack();
         void TurnRightIndependent();
@@ -11,6 +11,8 @@ class MovesPWM {
         void TurnLeftIndependent();
         void TurnLeftSteering();
         void SetFreq(int freq);
+        void TurnRightByFreq(int freq);
+        void TurnLeftByFreq(int freq);
         int GetFreq();
         void Stop();
         void ForceStop();
@@ -19,6 +21,6 @@ class MovesPWM {
         int _LeftBackPin;
         int _RightForwardPin;
         int _RightBackPin;
-		int _freq;
+		int _freq = 100;
 };
 

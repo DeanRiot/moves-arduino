@@ -52,7 +52,7 @@ void SerialControl::SetSpeed(int speed)
 
 void SerialControl::ShowInfo()
 {
-    Serial.println("Commands:");
+    Serial.println("__Commands Line__");
     Serial.println("{serial}");
     Serial.println("BatLVL - return battery charge status");
     Serial.println("CPI pin1,pin2,pin3,pin4; - set motor pins");
@@ -66,6 +66,8 @@ void SerialControl::ShowInfo()
     Serial.println("TRS; - send robot to turn right using steering system");
     Serial.println("STP; - send robot to stop");
     Serial.println("{uses pwm}");
+    Serial.println("TRBF,int; - send robot to go forward");
+    Serial.println("TLBF,int; - send robot to go forward");
     Serial.println("FRP; - send robot to go forward");
     Serial.println("GBP; - send robot to go back");
     Serial.println("TLIP; - send robot to turn left using independent system");
@@ -73,8 +75,8 @@ void SerialControl::ShowInfo()
     Serial.println("TRIP; - send robot to turn right using independent system");
     Serial.println("TRSP; - send robot to turn right using steering system");
     Serial.println("STP; - send robot to stop");
-    Serial.println("SF,0; - set PWM Freq in range 0 - 250");
-    Serial.println("GF; - return PWM freq value;");
+    Serial.println("SF,int; - set PWM Freq in range 0 - 250");
+    Serial.println("GF; - return PWM freq value; :");
 }
 
 void SerialControl::ReadCommand()
@@ -116,10 +118,10 @@ void SerialControl::ReadCommand()
             i++;
         }
         values[valueIndex] = valueBuffer.toInt();
-
+        /*
         Serial.print("Command name:\t");
         Serial.println(command);
-        Serial.print("Values:\t");
+        Serial.println(values[0]);
         for(int j=0;j<4;j++)
         {
             Serial.print(values[j]);
@@ -128,13 +130,16 @@ void SerialControl::ReadCommand()
             else
                 Serial.print("\t");
         }
+        */
+
         if(command == "Info")
                ShowInfo();
 		else if (command == "BatLVL")
 		{		
                 int val = analogRead(A0);
 				int lvl = map(val,0,1024,0,100);
-				Serial.println(lvl);			
+                String level = String(lvl);
+				Serial.println("Battery Level is "+level+" :");			
 		}
         else
         {
@@ -169,43 +174,48 @@ void SerialControl::MovesUnPWM(String command, int values[])
 
 void SerialControl::MovesPulseWideMod(String command, int values[])
 {
-    if (command == "CPI")
+    if (command.equals("CPI"))
     {
         delete MVPW;
         MVPW = new MovesPWM(values[0],values[1],values[2],values[3]);
     }
-    else if(command ==  "FRP"){
+    else if(command.equals("FRP"))
+    {
         Serial.print("FRP Check");
         MVPW->GoForward();
     }
-    else if(command ==  "GBP")
-        MVPW->GoBack();
-        
-    else if(command ==  "TLIP")
-        MVPW->TurnLeftIndependent();
-        
-    else if(command ==  "TLSP")
-        MVPW->TurnLeftSteering();
-        
-    else if(command ==  "TRIP")
-        MVPW->TurnRightIndependent();
-                
-    else if(command ==  "TRSP")
-        MVPW->TurnRightSteering();
-        
-    else if(command ==  "STP")
-        MVPW->Stop();
-        
-    else if(command ==  "GF")
-        Serial.println(MVPW->GetFreq());
-    else if(command ==  "FRSTP")
-        MVPW->ForceStop();
-    else if(command ==  "SF")
-        if(values[0]<0||values[0]>250)
-            MVPW->Stop();
-        else
-        {
-            Serial.println(values[0]);
+    else if(command.equals("GBP")){ MVPW->GoBack();}
+    else if(command.equals("TLIP")){ MVPW->TurnLeftIndependent();} 
+    else if(command.equals("TLSP")){ MVPW->TurnLeftSteering();}
+    else if(command.equals("TRIP")){MVPW->TurnRightIndependent();}
+    else if(command.equals("TRSP")){MVPW->TurnRightSteering();}
+    else if(command.equals("STP")){MVPW->Stop();}
+    else if(command.equals("GF"))
+    {
+        String frq = String(MVPW->GetFreq());
+        Serial.println("Freq is " + frq +" :");
+    }
+    else if(command.equals("FRSTP")){MVPW->ForceStop();}
+    else if(command.equals("TRBF"))
+    {
+        if(values[0]>=0&&values[0]<=250)
+            MVPW->TurnRightByFreq(values[0]);
+    }
+    else if(command.equals("TLBF"))
+    {
+        if(values[0]>=0&&values[0]<=250)
+            MVPW->TurnLeftByFreq(values[0]);
+    }
+
+    else if(command.equals("SF"))
+    {
+        if(values[0]>0&&values[0]<250) 
             MVPW->SetFreq(values[0]);
-        }
+    }
+   // else
+   // {
+  //      Serial.println("404 Unknown command");
+   // }
+
+        
 }
